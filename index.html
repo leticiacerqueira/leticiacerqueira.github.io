@@ -364,11 +364,11 @@ print(log)
       <span class="label">Projeto 3 · Python + SQL · geologia · QA/QC de sondagem</span>
       <h3>Esses teores são confiáveis? QA/QC e validação de um banco de sondagem</h3>
       <p class="question">Os teores de grafita de um banco de sondagem estão prontos para uma estimativa de recurso? Se não estiverem, quais lotes voltam ao laboratório e quais resultados ficam em espera?</p>
-      <p class="note">A rotina que eu fazia como analista de dados geológicos, em um projeto de grafita simulado (bancos reais de empresas são confidenciais): 40 furos, 7.630 m, 7.630 amostras de rotina e 1.325 amostras de controle em 43 lotes, no formato usual de collar, survey, litologia, amostragem e laudo com carbono grafítico (Cg) e carbono total (CT), com os problemas que aparecem na prática.</p>
+      <p class="note">A rotina que eu fazia como analista de dados geológicos na exploração de grafita, aqui num projeto simulado (bancos reais de empresas são confidenciais): 40 furos, 7.630 m, 7.630 amostras de rotina e 1.017 amostras de controle em 43 lotes, no formato usual de collar, survey, litologia, amostragem e laudo com carbono grafítico (Cg) e carbono total (CT), com os problemas que aparecem na prática.</p>
     </div>
     <div class="steps">
       <div class="step"><span class="label">1 · Validar o banco</span><p>Coordenadas, collar x survey, sobreposições e lacunas de intervalo, códigos de litologia, unidades, Cg maior que o carbono total e amostras enviadas x devolvidas. Cada problema vai para um log como corrigido ou revisar.</p></div>
-      <div class="step"><span class="label">2 · QA/QC</span><p>Cartas de controle dos padrões certificados (±2 e ±3 DP, viés por lote), brancos acima de 10 × LD e precisão das duplicatas de campo e de polpa (HARD).</p></div>
+      <div class="step"><span class="label">2 · QA/QC</span><p>Cartas de controle dos padrões certificados (±2 e ±3 DP, viés por lote), brancos acima de 10 × LD e precisão das duplicatas de campo (HARD).</p></div>
       <div class="step"><span class="label">3 · Impacto em SQL</span><p>Interceptos significativos com a técnica gaps and islands, ranking de furos com RANK e lista de pendências por furo para a equipe de geologia.</p></div>
     </div>
     <div style="overflow-x:auto">
@@ -376,10 +376,10 @@ print(log)
       <thead><tr><th>Verificação</th><th>Resultado</th></tr></thead>
       <tbody>
         <tr><td>Problemas no banco (ex.: este/norte trocados, teor em ppm no lugar de %, Cg maior que CT, furo “FD-40” inexistente)</td><td>25 · 12 corrigidos e 13 para revisar</td></tr>
-        <tr><td>Lotes reprovados no QA/QC</td><td>8 de 43</td></tr>
-        <tr><td>Amostras mineralizadas (≥ 3% Cg) nesses lotes</td><td>20,5%</td></tr>
-        <tr><td>Interceptos significativos que ficam provisórios (incluindo os 2 melhores furos)</td><td>10 de 44</td></tr>
-        <tr><td>Precisão das duplicatas: polpa · campo</td><td>aprovada · aprovada</td></tr>
+        <tr><td>Lotes reprovados no QA/QC</td><td>7 de 43</td></tr>
+        <tr><td>Amostras mineralizadas (≥ 3% Cg) nesses lotes</td><td>18,7%</td></tr>
+        <tr><td>Interceptos significativos que ficam provisórios (incluindo os 2 melhores furos)</td><td>9 de 43</td></tr>
+        <tr><td>Precisão das duplicatas de campo</td><td>aprovada (99% dos pares no limite)</td></tr>
       </tbody>
     </table>
     </div>
@@ -387,13 +387,13 @@ print(log)
     <div class="read" style="display:grid;gap:.75rem">
       <span class="label">O que os dados mostram</span>
       <ul class="insights">
-        <li><b>Deriva do laboratório</b> nos lotes L021 a L024: os três padrões sobem juntos (média de +1,6 a +2,0 DP). Poucos pontos passam de 3 DP, mas a sequência mostra o viés.</li>
+        <li><b>Deriva do laboratório</b> nos lotes L021 a L024: os três padrões sobem juntos (média de +1,7 a +2,4 DP). Como o desvio aparece nos três teores ao mesmo tempo, o problema é do laboratório, e não de um padrão.</li>
         <li>Um padrão “fora” no L010 era o <b>padrão errado no envio</b> (valor do PAD-ALTO numa etiqueta de PAD-MEDIO). Corrige-se o cadastro e o lote não é reanalisado à toa.</li>
         <li>Os brancos só contaminaram <b>logo depois de amostras de grafita maciça</b>: a grafita gruda no pulverizador e arrasta para a amostra seguinte. A solução é limpar com quartzo após alto teor.</li>
         <li>Três amostras vieram com <b>carbono grafítico maior que o carbono total</b>, o que é impossível: provável troca de colunas no laudo. Os interceptos com essas amostras ficam provisórios até o laboratório confirmar.</li>
       </ul>
     </div>
-    <figure><figcaption><b>Precisão das duplicatas</b><span>original x duplicata e curva HARD</span></figcaption><img src="img/qaqc-duplicatas.png" alt="Dispersão original x duplicata e curva HARD das duplicatas de campo e de polpa" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
+    <figure><figcaption><b>Precisão das duplicatas de campo</b><span>original x duplicata e curva HARD</span></figcaption><img src="img/qaqc-duplicatas.png" alt="Dispersão original x duplicata e curva HARD das duplicatas de campo" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
     <span class="label">Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
   </article>
 
