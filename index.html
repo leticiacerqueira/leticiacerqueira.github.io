@@ -362,7 +362,7 @@ print(log)
   <article class="case">
     <div class="case-head">
       <span class="label">Projeto 3 · Python + SQL · geologia · QA/QC de sondagem</span>
-      <h3>Esses teores são confiáveis? QA/QC e validação de um banco de sondagem</h3>
+      <h3>Esses teores são confiáveis? QA/QC, validação e KPIs de uma campanha de sondagem</h3>
       <p class="question">Os teores de grafita de um banco de sondagem estão prontos para uma estimativa de recurso? Se não estiverem, quais lotes voltam ao laboratório e quais resultados ficam em espera?</p>
       <p class="note">A rotina que eu fazia como analista de dados geológicos na exploração de grafita, aqui num projeto simulado (bancos reais de empresas são confidenciais): 40 furos, 7.630 m, 7.630 amostras de rotina e 1.017 amostras de controle em 43 lotes, no formato usual de collar, survey, litologia, amostragem e laudo com carbono grafítico (Cg) e carbono total (CT), com os problemas que aparecem na prática.</p>
     </div>
@@ -370,6 +370,7 @@ print(log)
       <div class="step"><span class="label">1 · Validar o banco</span><p>Coordenadas, collar x survey, sobreposições e lacunas de intervalo, códigos de litologia, unidades, Cg maior que o carbono total e amostras enviadas x devolvidas. Cada problema vai para um log como corrigido ou revisar.</p></div>
       <div class="step"><span class="label">2 · QA/QC</span><p>Cartas de controle dos padrões certificados (±2 e ±3 DP, viés por lote), brancos acima de 10 × LD e precisão das duplicatas de campo (HARD).</p></div>
       <div class="step"><span class="label">3 · Impacto em SQL</span><p>Interceptos significativos com a técnica gaps and islands, ranking de furos com RANK e lista de pendências por furo para a equipe de geologia.</p></div>
+      <div class="step"><span class="label">4 · KPIs de sondagem</span><p>Boletins das sondas validados e transformados em indicadores: avanço x meta, produtividade e disponibilidade por sonda, recuperação de testemunho e Pareto de paradas.</p></div>
     </div>
     <div style="overflow-x:auto">
     <table class="clean">
@@ -394,6 +395,14 @@ print(log)
       </ul>
     </div>
     <figure><figcaption><b>Precisão das duplicatas de campo</b><span>original x duplicata e curva HARD</span></figcaption><img src="img/qaqc-duplicatas.png" alt="Dispersão original x duplicata e curva HARD das duplicatas de campo" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
+    <figure><figcaption><b>Painel da campanha de sondagem</b><span>avanço, produtividade, recuperação e paradas</span></figcaption><img src="img/qaqc-painel-sondagem.png" alt="Painel com avanço acumulado x meta, produtividade por sonda, recuperação no xisto grafitoso por sonda e horas paradas por motivo" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
+    <div class="read" style="display:grid;gap:.75rem">
+      <span class="label">O que os boletins mostram</span>
+      <ul class="insights">
+        <li>A campanha terminou <b>14 dias depois da meta</b>. A sonda SD-03 perfura 1,53 m/h, contra 2,2 a 2,3 m/h das outras, caiu 27% ao longo da campanha e soma o dobro de horas de manutenção.</li>
+        <li>A SD-01, a mais rápida, recuperou só <b>86% do testemunho no xisto grafitoso</b> (meta de 90%). Os 10 furos abaixo da meta são todos dela: no minério friável, velocidade custa recuperação e pode enviesar o teor.</li>
+      </ul>
+    </div>
     <span class="label">Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
   </article>
 
