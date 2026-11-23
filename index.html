@@ -113,6 +113,10 @@ dialog.dash iframe{width:100%;height:100%;border:0;background:var(--bg)}
 .dash-foot{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;padding:.7rem 1rem;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
 .dash-foot b{color:var(--fg)}
 @media (max-width:640px){dialog.dash{width:100vw;height:100dvh;border-radius:0;border:0}}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+dialog.dash[data-modo="pbi"]{height:auto;max-height:calc(100dvh - 24px)}
+dialog.dash[data-modo="pbi"][open]{grid-template-rows:auto auto auto}
+dialog.dash[data-modo="pbi"] iframe{height:auto;aspect-ratio:1280/770;max-height:calc(100dvh - 170px)}
 </style>
 
 <div class="strata" aria-hidden="true">
@@ -410,9 +414,14 @@ print(log)
       </ul>
     </div>
     <figure><figcaption><b>Precisão das duplicatas de campo</b><span>original x duplicata e curva HARD</span></figcaption><img src="img/qaqc-duplicatas.png" alt="Dispersão original x duplicata e curva HARD das duplicatas de campo" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
-    <figure class="dash-prev"><figcaption><b>Painel interativo da campanha</b><span>filtros por sonda e período · caixa de testemunho por furo</span></figcaption>
-      <button type="button" class="dash-open" data-dash aria-label="Abrir o painel interativo da sondagem"><img src="img/qaqc-painel-sondagem.png" alt="Prévia do painel: avanço acumulado x meta, produtividade por sonda, recuperação na zona mineralizada e horas paradas" loading="lazy"><span class="btn primary">▶ Abrir painel interativo</span></button>
-    </figure>
+    <div class="dash-grid">
+      <figure class="dash-prev"><figcaption><b>Painel em Power BI</b><span>3 páginas · filtros por sonda e período</span></figcaption>
+        <button type="button" class="dash-open" data-dash="pbi" aria-label="Abrir o painel de sondagem em Power BI"><img src="img/qaqc-powerbi.png" alt="Página Resumo da Campanha do painel em Power BI: metros perfurados, % da meta, produtividade, disponibilidade e recuperação" loading="lazy"><span class="btn primary">▶ Abrir no Power BI</span></button>
+      </figure>
+      <figure class="dash-prev"><figcaption><b>Painel em HTML</b><span>caixa de testemunho por furo</span></figcaption>
+        <button type="button" class="dash-open" data-dash="html" aria-label="Abrir o painel interativo em HTML"><img src="img/qaqc-painel-sondagem.png" alt="Prévia do painel em HTML: avanço acumulado x meta, produtividade por sonda, recuperação e horas paradas" loading="lazy"><span class="btn">▶ Abrir versão HTML</span></button>
+      </figure>
+    </div>
     <div class="read" style="display:grid;gap:.75rem">
       <span class="label">O que os boletins mostram</span>
       <ul class="insights">
@@ -420,7 +429,7 @@ print(log)
         <li>A SD-01, a mais rápida, recuperou só <b>86,5% do testemunho na zona mineralizada</b> (meta de 90%). Os 20 furos abaixo da meta são todos dela: no minério friável, velocidade custa recuperação e pode enviesar o teor.</li>
       </ul>
     </div>
-    <span class="label"><a href="painel-sondagem/index.html" data-dash>Abrir o painel interativo</a> · Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
+    <span class="label"><a href="https://app.powerbi.com/view?r=eyJrIjoiZWRjYmVmNDgtMzcxNy00MzM0LWIwN2QtYTJjNmUyZDhhMWY3IiwidCI6ImI4YWYwYWFjLTcwMjEtNDcwOS1hYjFmLWU2MzQ1ZTczNTI3OCJ9" data-dash="pbi" target="_blank" rel="noopener">Abrir o painel em Power BI</a> · <a href="painel-sondagem/index.html" data-dash="html">versão HTML</a> · Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
   </article>
 
   <div class="soon">
@@ -509,13 +518,19 @@ document.getElementById("copy-email").addEventListener("click",e=>{
 });
 </script>
 <dialog class="dash" id="dash" aria-labelledby="dash-t">
-  <div class="dash-head"><h4 id="dash-t">Painel da Sondagem · exploração de grafita</h4><button type="button" class="dash-x" id="dash-x" aria-label="Fechar">✕</button></div>
-  <iframe title="Painel interativo da campanha de sondagem" loading="lazy"></iframe>
-  <div class="dash-foot"><span><b>Conteúdo:</b> avanço x meta, produtividade das sondas, recuperação de testemunho, paradas e caixa de testemunho por furo</span><span><b>Ferramentas:</b> Python, SQL, HTML/SVG e JavaScript</span><span><a href="painel-sondagem/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a> · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">código</a></span></div>
+  <div class="dash-head"><h4 id="dash-t"></h4><button type="button" class="dash-x" id="dash-x" aria-label="Fechar">✕</button></div>
+  <iframe title="Painel interativo da campanha de sondagem" allowfullscreen></iframe>
+  <div class="dash-foot" id="dash-foot"></div>
 </dialog>
 <script>
-(()=>{const d=document.getElementById("dash"),f=d.querySelector("iframe");
-document.querySelectorAll("[data-dash]").forEach(b=>b.addEventListener("click",e=>{if(!d.showModal)return;e.preventDefault();if(!f.src)f.src="painel-sondagem/index.html";d.showModal();}));
+(()=>{const d=document.getElementById("dash"),f=d.querySelector("iframe"),t=document.getElementById("dash-t"),ft=document.getElementById("dash-foot");
+const GH='<a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">GitHub</a>';
+const M={pbi:{src:"https://app.powerbi.com/view?r=eyJrIjoiZWRjYmVmNDgtMzcxNy00MzM0LWIwN2QtYTJjNmUyZDhhMWY3IiwidCI6ImI4YWYwYWFjLTcwMjEtNDcwOS1hYjFmLWU2MzQ1ZTczNTI3OCJ9",t:"Painel de Sondagem · Power BI",
+  f:'<span><b>Páginas:</b> Resumo da Campanha, Sondas e Recuperação e QA/QC</span><span><b>Ferramentas:</b> Python, SQL, Power Query, Power BI e DAX</span><span><b>Código:</b> '+GH+'</span>'},
+ html:{src:"painel-sondagem/index.html",t:"Painel de Sondagem · HTML",
+  f:'<span><b>Conteúdo:</b> avanço x meta, sondas, recuperação, paradas e caixa de testemunho por furo</span><span><b>Ferramentas:</b> Python, SQL, HTML/SVG e JavaScript</span><span><b>Código:</b> '+GH+' · <a href="painel-sondagem/index.html" target="_blank" rel="noopener">tela cheia</a></span>'}};
+document.querySelectorAll("[data-dash]").forEach(b=>b.addEventListener("click",e=>{if(!d.showModal)return;e.preventDefault();
+  const m=M[b.dataset.dash]||M.pbi;d.dataset.modo=b.dataset.dash;t.textContent=m.t;ft.innerHTML=m.f;if(f.getAttribute("src")!==m.src)f.src=m.src;d.showModal();}));
 document.getElementById("dash-x").onclick=()=>d.close();
 d.addEventListener("click",e=>{if(e.target===d)d.close();});})();
 </script>
