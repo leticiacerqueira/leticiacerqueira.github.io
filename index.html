@@ -13,24 +13,24 @@
 <style>
 /* Layout: coluna única de leitura (~68ch) com faixa estratigráfica no topo; estudo de caso com gráficos em grade 2x2 */
 :root{
-  --bg:#f4f5f3; --surface:#ffffff; --fg:#1c2127; --muted:#5b636c; --line:#dfe2de;
-  --accent:#1f6f62;        /* malaquita */
-  --accent-soft:#e1efeb;
-  --ochre:#b7791f;         /* limonita, destaque de dado */
-  --bar:#9aa59f;
+  --bg:#f7f2ec; --surface:#fffdfa; --fg:#2b1d14; --muted:#6e5a4b; --line:#e6dace;
+  --accent:#c2560f;        /* laranja */
+  --accent-soft:#fbe6d6;
+  --ochre:#7a4a2a;         /* marrom, destaque de dado */
+  --bar:#c9a98f;
   --f-display:"Archivo","Segoe UI",system-ui,sans-serif;
   --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
-  --s1:#c9b48a; --s2:#8f9b8a; --s3:#5f6f73; --s4:#a8714a; --s5:#3c4a52;
+  --s1:#d9b48a; --s2:#b07a4f; --s3:#7a4a2a; --s4:#e07a2e; --s5:#4a2e1e;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#14181b; --surface:#1b2024; --fg:#e7eae8; --muted:#9aa3a8; --line:#2c3337;
-  --accent:#5fbfaa; --accent-soft:#1d332f; --ochre:#e0a548; --bar:#56625d;
-  --s1:#6e6248; --s2:#4c5749; --s3:#3a464a; --s4:#6b4a33; --s5:#2a3338; color-scheme:dark}}
+  --bg:#1a130f; --surface:#231a15; --fg:#f1e7df; --muted:#b9a596; --line:#3a2c23;
+  --accent:#f08a3c; --accent-soft:#3a2416; --ochre:#d9a066; --bar:#6b5345;
+  --s1:#6e5038; --s2:#5a3c28; --s3:#43301f; --s4:#8a4a1c; --s5:#2e1f15; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#14181b; --surface:#1b2024; --fg:#e7eae8; --muted:#9aa3a8; --line:#2c3337;
-  --accent:#5fbfaa; --accent-soft:#1d332f; --ochre:#e0a548; --bar:#56625d;
-  --s1:#6e6248; --s2:#4c5749; --s3:#3a464a; --s4:#6b4a33; --s5:#2a3338; color-scheme:dark}
+  --bg:#1a130f; --surface:#231a15; --fg:#f1e7df; --muted:#b9a596; --line:#3a2c23;
+  --accent:#f08a3c; --accent-soft:#3a2416; --ochre:#d9a066; --bar:#6b5345;
+  --s1:#6e5038; --s2:#5a3c28; --s3:#43301f; --s4:#8a4a1c; --s5:#2e1f15; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -117,6 +117,10 @@ dialog.dash iframe{width:100%;height:100%;border:0;background:var(--bg)}
 dialog.dash[data-modo="pbi"]{height:auto;max-height:calc(100dvh - 24px)}
 dialog.dash[data-modo="pbi"][open]{grid-template-rows:auto auto auto}
 dialog.dash[data-modo="pbi"] iframe{height:auto;aspect-ratio:1280/770;max-height:calc(100dvh - 170px)}
+.prose p{margin:0 0 1rem}
+.help .step{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:8px;padding:1rem 1.1rem}
+.help .step h3{font-size:1.05rem;margin:0}
+.help .step p{margin:0;color:var(--muted);font-size:.95rem}
 </style>
 
 <div class="strata" aria-hidden="true">
@@ -140,11 +144,24 @@ dialog.dash[data-modo="pbi"] iframe{height:auto;aspect-ratio:1280/770;max-height
 
 <section aria-labelledby="sobre">
   <h2 id="sobre">Sobre</h2>
-  <p class="read">Fui Analista de Dados Geológicos na Monte Santo Stone por pouco mais de dois anos, depois de dois anos e meio de estágios em análise de dados de exploração mineral e geotecnia. Cuidei do ciclo completo do dado: coleta, ETL em Power Query e Python, regras de QA/QC, modelagem em Power BI e relatórios para gestores e investidores. Tenho disponibilidade imediata e para mudança de cidade.</p>
+  <div class="read prose">
+    <p>Sou geóloga e analista de dados. Na Monte Santo Stone, trabalhei por pouco mais de dois anos como Analista de Dados Geológicos numa campanha de exploração de grafita, depois de dois anos e meio de estágios com dados de exploração mineral, geofísica e geotecnia. Cuidei do ciclo completo do dado: coleta em campo, ETL em Power Query e Python, regras de QA/QC, modelagem em Power BI e relatórios para gestores e investidores.</p>
+    <p>Meu jeito de trabalhar começa pela pergunta de quem decide: a campanha vai bater a meta? Qual sonda está atrasando? Qual lote de amostras volta para o laboratório? Antes de qualquer gráfico, confiro se o dado é confiável. Depois defino os indicadores e só então monto o painel. A formação em geologia me ajuda a enxergar quando um número não faz sentido no mundo real.</p>
+    <p>Hoje desenvolvo projetos com SQL, Python e Power BI usando dados de mineração e óleo e gás, como os estudos de caso abaixo. Busco uma vaga em análise de dados ou BI, de preferência em mineração, energia ou geociências. Tenho disponibilidade imediata e para mudança de cidade.</p>
+  </div>
   <div class="facts">
     <div class="fact"><b>-30%</b><span>de retrabalho após implantar rotinas de QA/QC com rastreabilidade de amostras</span></div>
     <div class="fact"><b>12.000 m</b><span>de testemunhos de sondagem em uma base saneada e padronizada para modelagem 3D</span></div>
     <div class="fact"><b>8 alvos</b><span>identificados a partir de dados de mapeamento estruturados em mais de 20.000 ha</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="ajudo">
+  <h2 id="ajudo">Como eu ajudo</h2>
+  <div class="steps help">
+    <div class="step"><span class="label">01</span><h3>Dados confiáveis antes do gráfico</h3><p>Regras de validação, rastreabilidade de amostras e QA/QC para que o painel mostre a realidade, e não erros de digitação.</p></div>
+    <div class="step"><span class="label">02</span><h3>Indicadores que viram decisão</h3><p>KPIs ligados a metas reais, como avanço, produtividade e recuperação, em painéis que o gestor entende em poucos segundos.</p></div>
+    <div class="step"><span class="label">03</span><h3>Menos trabalho repetitivo</h3><p>Rotinas em Python e Power Query que consolidam planilhas e relatórios que antes eram montados à mão toda semana.</p></div>
   </div>
 </section>
 
@@ -534,6 +551,5 @@ document.querySelectorAll("[data-dash]").forEach(b=>b.addEventListener("click",e
 document.getElementById("dash-x").onclick=()=>d.close();
 d.addEventListener("click",e=>{if(e.target===d)d.close();});})();
 </script>
-
 </body>
 </html>
