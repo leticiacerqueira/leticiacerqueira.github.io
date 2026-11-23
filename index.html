@@ -359,13 +359,45 @@ print(log)
     <span class="label">Código · <a href="https://github.com/leticiacerqueira/validacao-ocr-patentes" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
   </article>
 
+  <article class="case">
+    <div class="case-head">
+      <span class="label">Projeto 3 · Python + SQL · geologia · QA/QC de sondagem</span>
+      <h3>Esses teores são confiáveis? QA/QC e validação de um banco de sondagem</h3>
+      <p class="question">Os teores de ouro de um banco de sondagem estão prontos para uma estimativa de recurso? Se não estiverem, quais lotes voltam ao laboratório e quais resultados ficam em espera?</p>
+      <p class="note">A rotina que eu fazia como analista de dados geológicos, em um projeto de ouro simulado (bancos reais de empresas são confidenciais): 40 furos, 7.630 m, 7.630 amostras de rotina e 1.347 amostras de controle em 43 lotes, no formato usual de collar, survey, litologia, amostragem e laudo, com os problemas que aparecem na prática.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="label">1 · Validar o banco</span><p>Coordenadas, collar x survey, sobreposições e lacunas de intervalo, códigos de litologia, unidades e amostras enviadas x devolvidas. Cada problema vai para um log como corrigido ou revisar.</p></div>
+      <div class="step"><span class="label">2 · QA/QC</span><p>Cartas de controle dos padrões certificados (±2 e ±3 DP, viés por lote), brancos acima de 10 × LD e precisão das duplicatas de campo e de polpa (HARD).</p></div>
+      <div class="step"><span class="label">3 · Impacto em SQL</span><p>Interceptos significativos com a técnica gaps and islands, ranking de furos com RANK e lista de pendências por furo para a equipe de geologia.</p></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="clean">
+      <thead><tr><th>Verificação</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td>Problemas no banco (ex.: este/norte trocados, valor em ppb, furo “FD-40” inexistente)</td><td>22 · 12 corrigidos e 10 para revisar</td></tr>
+        <tr><td>Lotes reprovados no QA/QC</td><td>8 de 43</td></tr>
+        <tr><td>Amostras mineralizadas (≥ 0,3 g/t) nesses lotes</td><td>21,2%</td></tr>
+        <tr><td>Interceptos significativos que ficam provisórios</td><td>8 de 42</td></tr>
+        <tr><td>Precisão das duplicatas: polpa · campo</td><td>aprovada · reprovada</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <figure><figcaption><b>Cartas de controle dos padrões</b><span>Au em ppm · faixas = lotes reprovados</span></figcaption><img src="img/qaqc-cartas-controle.png" alt="Cartas de controle dos três padrões certificados, com a deriva do laboratório nos lotes L021 a L024" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
+    <div class="read" style="display:grid;gap:.75rem">
+      <span class="label">O que os dados mostram</span>
+      <ul class="insights">
+        <li><b>Deriva do laboratório</b> nos lotes L021 a L024: os três padrões sobem juntos (média de +1,8 a +2,0 DP). Nenhum ponto isolado parece grave, mas a sequência mostra o viés.</li>
+        <li>Um padrão “fora” no L010 era o <b>padrão errado no envio</b> (valor do PAD-ALTO numa etiqueta de PAD-MEDIO). Corrige-se o cadastro e o lote não é reanalisado à toa.</li>
+        <li>Os brancos só contaminaram <b>logo depois de amostras com mais de 17 g/t</b>: arraste na preparação, resolvido limpando o britador.</li>
+        <li>A duplicata de polpa repete bem e a de campo não: o laboratório é preciso, e a variação vem do <b>efeito pepita</b> do ouro grosso. A solução está na amostragem, não no laboratório.</li>
+      </ul>
+    </div>
+    <figure><figcaption><b>Precisão das duplicatas</b><span>original x duplicata e curva HARD</span></figcaption><img src="img/qaqc-duplicatas.png" alt="Dispersão original x duplicata e curva HARD das duplicatas de campo e de polpa" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
+    <span class="label">Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
+  </article>
+
   <div class="soon">
-    <article>
-      <span class="pill">Em construção</span>
-      <span class="label">Projeto 3 · Python · geologia</span>
-      <h3>QA/QC de uma base de sondagem</h3>
-      <p>Validação automática de furos: sobreposição e lacunas de intervalos, profundidades fora do furo, teores impossíveis e controle de amostras de referência, com relatório de não conformidades.</p>
-    </article>
     <article>
       <span class="pill">Em construção</span>
       <span class="label">Projeto 4 · SQL + Power BI · óleo e gás</span>
