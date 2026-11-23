@@ -81,6 +81,7 @@ figcaption b{font:700 1rem/1.3 var(--f-display)}
 figcaption span{font-size:.88rem;color:var(--muted)}
 svg text{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
 svg .v{fill:var(--fg);font-weight:500}
+.callout{display:grid;gap:.6rem;background:var(--bg);border-radius:8px;padding:1rem 1.1rem;min-width:0}
 .insights{display:grid;gap:.6rem;padding:0;margin:0;list-style:none}
 .insights li{padding-left:1.2rem;position:relative}
 .insights li::before{content:"";position:absolute;left:0;top:.6em;width:.5rem;height:.5rem;background:var(--ochre);border-radius:1px}
@@ -143,45 +144,59 @@ footer{padding-block:2rem 3rem;border-top:1px solid var(--line);color:var(--mute
 
   <article class="case">
     <div class="case-head">
-      <span class="label">Projeto 1 · Python + SQL · mineração</span>
-      <h3>Para onde vão os royalties da mineração? Análise da CFEM</h3>
-      <p class="question">Quais substâncias, estados e municípios concentram a arrecadação da CFEM, e como ela varia ao longo do ano?</p>
-      <p class="note">A CFEM é a compensação financeira paga pelas mineradoras sobre o faturamento. A base usada aqui é simulada, com o mesmo layout dos dados abertos da ANM (2019 a set/2025), e inclui de propósito os problemas reais desse tipo de arquivo. Os valores servem para demonstrar o método, não são números oficiais.</p>
+      <span class="label">Projeto 1 · Python + SQL · mineração · dados reais da ANM</span>
+      <h3>Para onde vão os royalties da mineração? Análise da CFEM 2022–2026</h3>
+      <p class="question">Quais substâncias, estados e municípios concentram a arrecadação da CFEM, o que mais cresceu nos últimos anos e como 2026 se compara a 2025?</p>
+      <p class="note">A CFEM é a compensação financeira que as mineradoras pagam sobre o faturamento. Fonte: Agência Nacional de Mineração, arquivo “Arrecadação pela CFEM 2022 a 2026” do Portal de Dados Abertos, atualizado em 19/11/2026. São 633 mil registros. Como os lançamentos de 2026 só estão completos até junho, as comparações de 2026 usam o 1º semestre.</p>
     </div>
 
     <div class="steps">
-      <div class="step"><span class="label">1 · Limpeza em Python</span><p>Leitura do CSV no padrão brasileiro (ponto e vírgula, vírgula decimal, cp1252), padronização de nomes e de grafias, remoção de duplicadas.</p></div>
-      <div class="step"><span class="label">2 · Carga em SQLite</span><p>Tabela única com data mensal e uma flag para registros sem quantidade, sem descartar o valor recolhido.</p></div>
-      <div class="step"><span class="label">3 · Perguntas em SQL</span><p>CTEs e window functions: variação anual com LAG, Pareto com soma acumulada, ranking por estado com RANK e média móvel de 3 meses.</p></div>
+      <div class="step"><span class="label">1 · Limpeza em Python</span><p>Leitura de 85 MB com pandas, conversão de vírgula decimal, remoção de espaços (a unidade vem como “t&nbsp;&nbsp;”), duplicadas e agrupamento de substâncias cadastradas com nomes diferentes.</p></div>
+      <div class="step"><span class="label">2 · Carga em SQLite</span><p>Tabela única com data mensal e flags de qualidade para registros sem local ou sem quantidade, sem descartar o valor recolhido.</p></div>
+      <div class="step"><span class="label">3 · Perguntas em SQL</span><p>CTEs e window functions: variação anual com LAG, Pareto com soma acumulada, crescimento por substância com CASE e ranking por estado com RANK.</p></div>
     </div>
 
     <div style="overflow-x:auto">
     <table class="clean">
       <thead><tr><th>Etapa de qualidade</th><th>Registros</th></tr></thead>
       <tbody>
-        <tr><td>Linhas no arquivo bruto</td><td>6.705</td></tr>
-        <tr><td>Grafias de substância corrigidas (ex.: “Minério de Ferro”, “ MINERIO DE FERRO”)</td><td>248</td></tr>
-        <tr><td>Linhas duplicadas removidas</td><td>25</td></tr>
-        <tr><td>Registros sem quantidade (mantidos e marcados, 1,1% do valor)</td><td>73</td></tr>
-        <tr><td>Linhas na base final · 14 substâncias · 26 municípios</td><td>6.680</td></tr>
+        <tr><td>Linhas no arquivo da ANM</td><td>633.080</td></tr>
+        <tr><td>Linhas duplicadas removidas</td><td>23.771</td></tr>
+        <tr><td>Linhas reagrupadas por nome de substância (201 nomes viram 182 grupos)</td><td>37.876</td></tr>
+        <tr><td>Quantidade zero ou vazia (mantidas e marcadas, 0,8% do valor)</td><td>22.929</td></tr>
+        <tr><td>Sem estado e município (mantidas e marcadas)</td><td>51</td></tr>
+        <tr><td>Linhas na base final · 27 UFs · 3.178 municípios</td><td>609.309</td></tr>
       </tbody>
     </table>
     </div>
 
+    <div class="callout">
+      <span class="label">Por que agrupar nomes importa</span>
+      <p>A ANM registra o mesmo minério como “FERRO” e “MINÉRIO DE FERRO”. Olhando separado, um parece cair 13% e o outro subir 44% entre 2022 e 2025. Somados, o ferro ficou praticamente estável (+2,4%). Sem esse tratamento, a análise contaria uma história errada.</p>
+      <div style="overflow-x:auto"><table class="clean">
+        <thead><tr><th>R$ milhões</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+        <tbody>
+          <tr><td>“FERRO”</td><td>3.875</td><td>3.608</td><td>3.732</td><td>3.366</td></tr>
+          <tr><td>“MINÉRIO DE FERRO”</td><td>1.462</td><td>1.524</td><td>1.846</td><td>2.099</td></tr>
+          <tr><td><b>Ferro agrupado</b></td><td><b>5.337</b></td><td><b>5.133</b></td><td><b>5.578</b></td><td><b>5.465</b></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
     <div class="charts">
-      <figure><figcaption><b>Arrecadação por ano</b><span>R$ milhões · 2025 vai só até setembro</span></figcaption><svg id="c-ano" role="img" aria-label="Gráfico de barras da arrecadação anual"></svg></figure>
-      <figure><figcaption><b>Concentração por substância</b><span>R$ milhões · as 8 maiores</span></figcaption><svg id="c-sub" role="img" aria-label="Gráfico de barras da arrecadação por substância"></svg></figure>
-      <figure><figcaption><b>Municípios que mais arrecadam</b><span>R$ milhões · 2019 a set/2025</span></figcaption><svg id="c-mun" role="img" aria-label="Gráfico de barras dos maiores municípios"></svg></figure>
-      <figure><figcaption><b>Sazonalidade</b><span>Média mensal 2019–2024, R$ milhões</span></figcaption><svg id="c-mes" role="img" aria-label="Gráfico de linha da média por mês do ano"></svg></figure>
+      <figure><figcaption><b>Arrecadação por ano</b><span>R$ milhões · anos completos</span></figcaption><svg id="c-ano" role="img" aria-label="Gráfico de barras da arrecadação anual"></svg></figure>
+      <figure><figcaption><b>1º semestre de cada ano</b><span>R$ milhões · janeiro a junho</span></figcaption><svg id="c-sem" role="img" aria-label="Gráfico de barras da arrecadação no primeiro semestre"></svg></figure>
+      <figure><figcaption><b>Concentração por substância</b><span>R$ milhões · 2022 a jun/2026 · as 8 maiores</span></figcaption><svg id="c-sub" role="img" aria-label="Gráfico de barras da arrecadação por substância"></svg></figure>
+      <figure><figcaption><b>Municípios que mais arrecadam</b><span>R$ milhões · 2022 a jun/2026</span></figcaption><svg id="c-mun" role="img" aria-label="Gráfico de barras dos maiores municípios"></svg></figure>
     </div>
 
     <div class="read" style="display:grid;gap:.75rem">
       <span class="label">O que os dados mostram</span>
       <ul class="insights">
-        <li>Minério de ferro responde por <b>87,9%</b> da arrecadação. Com o cobre, chega a <b>94,4%</b>. Qualquer variação no preço do ferro mexe com quase toda a receita.</li>
-        <li>O Pará concentra <b>71,7%</b> do total, e só Parauapebas e Canaã dos Carajás somam <b>66,6%</b>. A dependência de poucos municípios é o principal risco para quem planeja essa receita.</li>
-        <li>A arrecadação teve pico em 2021 (+46,6% sobre 2020) e caiu 26% até 2024, o que acompanha o ciclo de preço do minério.</li>
-        <li>Janeiro e fevereiro são os meses mais fracos. De julho a setembro a média é cerca de 39% maior, um padrão útil para projeção de caixa dos municípios.</li>
+        <li>A arrecadação subiu de <b>R$ 7,0 bi</b> em 2022 para <b>R$ 7,9 bi</b> em 2025 (+12,7%). O 1º semestre de 2026 já está <b>3,8% acima</b> do mesmo período de 2025.</li>
+        <li>O ferro responde por <b>72,5%</b> de tudo. Com cobre e ouro, chega a <b>84,9%</b>.</li>
+        <li>Os destaques de crescimento de 2022 para 2025 são o <b>cobre (+102%)</b> e o <b>ouro (+64%)</b>, que acompanham a alta de preço desses metais.</li>
+        <li>Minas Gerais (45,0%) e Pará (40,2%) somam 85% da arrecadação. Só Parauapebas e Canaã dos Carajás respondem por <b>32%</b> do país, o que mostra a dependência de poucos municípios.</li>
       </ul>
     </div>
 
@@ -191,91 +206,119 @@ footer{padding-block:2rem 3rem;border-top:1px solid var(--line);color:var(--mute
         <button class="tab" role="tab" id="t-sql" aria-selected="true" aria-controls="p-sql">SQL</button>
         <button class="tab" role="tab" id="t-py" aria-selected="false" aria-controls="p-py">Python (limpeza)</button>
       </div>
-      <pre id="p-sql" role="tabpanel" aria-labelledby="t-sql"><code>-- Q1. Quanto se arrecadou por ano e qual foi a variação em relação ao ano anterior?
+      <pre id="p-sql" role="tabpanel" aria-labelledby="t-sql"><code>-- Q1. Arrecadação por ano e variação sobre o ano anterior (anos completos)
 WITH anual AS (
   SELECT ano, SUM(valor_recolhido) AS total
-  FROM cfem
-  WHERE ano &lt; 2025                      -- 2025 vai só até setembro
-  GROUP BY ano
+  FROM cfem WHERE ano &lt;= 2025 GROUP BY ano
 )
 SELECT ano,
        ROUND(total / 1e6, 1) AS total_milhoes,
-       ROUND(100.0 * (total - LAG(total) OVER (ORDER BY ano))
-             / LAG(total) OVER (ORDER BY ano), 1) AS variacao_pct
-FROM anual
-ORDER BY ano;
+       ROUND(100.0 * (total / LAG(total) OVER (ORDER BY ano) - 1), 1) AS variacao_pct
+FROM anual ORDER BY ano;
 
--- Q2. Quais substâncias concentram a arrecadação? (participação e acumulado, estilo Pareto)
+-- Q3. Concentração por substância (Pareto), já com os nomes agrupados
 WITH por_subst AS (
-  SELECT substancia, SUM(valor_recolhido) AS total
-  FROM cfem GROUP BY substancia
+  SELECT grupo_substancia, SUM(valor_recolhido) AS total
+  FROM cfem GROUP BY grupo_substancia
 )
-SELECT substancia,
+SELECT grupo_substancia,
        ROUND(total / 1e6, 1) AS total_milhoes,
        ROUND(100.0 * total / SUM(total) OVER (), 1) AS part_pct,
-       ROUND(100.0 * SUM(total) OVER (ORDER BY total DESC)
-             / SUM(total) OVER (), 1) AS acumulado_pct
+       ROUND(100.0 * SUM(total) OVER (ORDER BY total DESC) / SUM(total) OVER (), 1) AS acumulado_pct
 FROM por_subst
-ORDER BY total DESC;
+ORDER BY total DESC
+LIMIT 10;
 
--- Q3. Top 3 municípios arrecadadores em cada estado
-WITH mun AS (
-  SELECT uf, municipio, SUM(valor_recolhido) AS total
-  FROM cfem GROUP BY uf, municipio
-), ranqueado AS (
-  SELECT *, RANK() OVER (PARTITION BY uf ORDER BY total DESC) AS posicao
-  FROM mun
+-- Q4. Quais substâncias mais cresceram de 2022 para 2025? (mínimo R$ 50 mi em 2025)
+WITH base AS (
+  SELECT grupo_substancia,
+         SUM(CASE WHEN ano = 2022 THEN valor_recolhido END) AS v2022,
+         SUM(CASE WHEN ano = 2025 THEN valor_recolhido END) AS v2025
+  FROM cfem GROUP BY grupo_substancia
+)
+SELECT grupo_substancia,
+       ROUND(v2022 / 1e6, 1) AS mi_2022,
+       ROUND(v2025 / 1e6, 1) AS mi_2025,
+       ROUND(100.0 * (v2025 / v2022 - 1), 1) AS crescimento_pct
+FROM base
+WHERE v2025 &gt;= 50e6
+ORDER BY crescimento_pct DESC;
+
+-- Q5. Top 3 municípios em cada um dos 5 estados que mais arrecadam
+WITH uf_top AS (
+  SELECT uf FROM cfem WHERE uf IS NOT NULL
+  GROUP BY uf ORDER BY SUM(valor_recolhido) DESC LIMIT 5
+), mun AS (
+  SELECT uf, municipio, SUM(valor_recolhido) AS total,
+         RANK() OVER (PARTITION BY uf ORDER BY SUM(valor_recolhido) DESC) AS posicao
+  FROM cfem WHERE uf IN (SELECT uf FROM uf_top)
+  GROUP BY uf, municipio
 )
 SELECT uf, posicao, municipio, ROUND(total / 1e6, 1) AS total_milhoes
-FROM ranqueado
-WHERE posicao &lt;= 3
+FROM mun WHERE posicao &lt;= 3
 ORDER BY uf, posicao;</code></pre>
-      <pre id="p-py" role="tabpanel" aria-labelledby="t-py" hidden><code>&quot;&quot;&quot;Projeto 1 - CFEM: limpeza e padronização da base de arrecadação.
-Entrada: CFEM_Arrecadacao_simulada.csv (layout da ANM, &#x27;;&#x27; e decimal &#x27;,&#x27;, cp1252)
-Saída: cfem_limpo.csv + cfem.db (SQLite para as consultas em SQL)
+      <pre id="p-py" role="tabpanel" aria-labelledby="t-py" hidden><code>&quot;&quot;&quot;Projeto CFEM com dados reais da ANM: limpeza e padronização.
+
+Entrada: CFEM_Arrecadacao_2022_2026.csv (Portal de Dados Abertos, conjunto
+&quot;sistema-arrecadacao&quot;, arquivo atualizado pela ANM em 19/11/2026).
+Saída: cfem.db (SQLite, tabela cfem) e log de qualidade no terminal.
 &quot;&quot;&quot;
-import sqlite3, unicodedata
+import re, sqlite3, sys, unicodedata
 import pandas as pd
 
-ENTRADA = &quot;CFEM_Arrecadacao_simulada.csv&quot;
-df = pd.read_csv(ENTRADA, sep=&quot;;&quot;, decimal=&quot;,&quot;, encoding=&quot;cp1252&quot;)
+ENTRADA = sys.argv[1] if len(sys.argv) &gt; 1 else &quot;CFEM_Arrecadacao_2022_2026.csv&quot;
+
+# 1. Leitura: separador &quot;,&quot;, decimal &quot;,&quot;, encoding cp1252. Tudo como texto primeiro.
+df = pd.read_csv(ENTRADA, sep=&quot;,&quot;, encoding=&quot;cp1252&quot;, dtype=str)
 log = {&quot;linhas_brutas&quot;: len(df)}
 
-# 1. Nomes de colunas sem acento, em snake_case
 def sem_acento(s):
     return unicodedata.normalize(&quot;NFKD&quot;, s).encode(&quot;ascii&quot;, &quot;ignore&quot;).decode()
+
 df.columns = [sem_acento(c).lower() for c in df.columns]
 df = df.rename(columns={&quot;tipo_pf_pj&quot;: &quot;tipo_pessoa&quot;, &quot;cpf_cnpj&quot;: &quot;documento&quot;,
-                        &quot;anodoprocesso&quot;: &quot;ano_processo&quot;,
-                        &quot;quantidadecomercializada&quot;: &quot;quantidade&quot;,
-                        &quot;unidadedemedida&quot;: &quot;unidade&quot;, &quot;valorrecolhido&quot;: &quot;valor_recolhido&quot;})
+                        &quot;anodoprocesso&quot;: &quot;ano_processo&quot;, &quot;codigomunicipio&quot;: &quot;cod_municipio&quot;,
+                        &quot;quantidadecomercializada&quot;: &quot;quantidade&quot;, &quot;unidadedemedida&quot;: &quot;unidade&quot;,
+                        &quot;valorrecolhido&quot;: &quot;valor_recolhido&quot;, &quot;datacriacao&quot;: &quot;data_criacao&quot;})
 
-# 2. Padronizar substância: espaços, caixa e acentos (&quot;Minério de Ferro&quot;, &quot; MINERIO DE FERRO&quot;)
-mapa = {&quot;MINERIO DE FERRO&quot;: &quot;MINÉRIO DE FERRO&quot;, &quot;AGUA MINERAL&quot;: &quot;ÁGUA MINERAL&quot;,
-        &quot;NIOBIO&quot;: &quot;NIÓBIO&quot;, &quot;NIQUEL&quot;: &quot;NÍQUEL&quot;}
-original = df[&quot;substancia&quot;].copy()
-chave = original.str.strip().str.upper().map(sem_acento)
-df[&quot;substancia&quot;] = chave.map(mapa).fillna(original.str.strip().str.upper())
-log[&quot;grafias_corrigidas&quot;] = int((original != df[&quot;substancia&quot;]).sum())
+# 2. Tipos: números com vírgula decimal, inteiros e datas
+for c in [&quot;quantidade&quot;, &quot;valor_recolhido&quot;]:
+    df[c] = pd.to_numeric(df[c].str.replace(&quot;,&quot;, &quot;.&quot;, regex=False), errors=&quot;coerce&quot;)
+df[&quot;ano&quot;] = df[&quot;ano&quot;].astype(int)
+df[&quot;mes&quot;] = df[&quot;mes&quot;].astype(int)
+df[&quot;data&quot;] = pd.to_datetime(dict(year=df[&quot;ano&quot;], month=df[&quot;mes&quot;], day=1)).dt.strftime(&quot;%Y-%m-%d&quot;)
 
-# 3. Remover linhas duplicadas
-dup = df.duplicated().sum()
+# 3. Texto: espaços sobrando (a unidade vem como &quot;t  &quot;) e caixa
+for c in [&quot;substancia&quot;, &quot;unidade&quot;, &quot;uf&quot;, &quot;municipio&quot;, &quot;tipo_pessoa&quot;]:
+    df[c] = df[c].str.strip()
+
+# 4. Duplicadas exatas (mesmo processo, valor e data de criação)
+dup = int(df.duplicated().sum())
 df = df.drop_duplicates()
-log[&quot;duplicadas_removidas&quot;] = int(dup)
+log[&quot;duplicadas_removidas&quot;] = dup
 
-# 4. Quantidade vazia: manter a linha (o valor recolhido existe), marcar com flag
-df[&quot;quantidade_informada&quot;] = df[&quot;quantidade&quot;].notna()
-log[&quot;quantidades_vazias&quot;] = int((~df[&quot;quantidade_informada&quot;]).sum())
+# 5. Agrupar a mesma substância cadastrada com nomes diferentes.
+#    Ex.: &quot;FERRO&quot; e &quot;MINÉRIO DE FERRO&quot; são o mesmo bem mineral para a análise.
+EQUIV = {&quot;BAUXITA&quot;: &quot;ALUMÍNIO&quot;, &quot;ESPODUMÊNIO&quot;: &quot;LÍTIO&quot;, &quot;CALCÁRIO DOLOMÍTICO&quot;: &quot;CALCÁRIO&quot;,
+         &quot;AREIA QUARTZOSA&quot;: &quot;AREIA&quot;}
+def grupo(s):
+    g = re.sub(r&quot;^MINÉRIO DE &quot;, &quot;&quot;, s)
+    return EQUIV.get(g, g)
+df[&quot;grupo_substancia&quot;] = df[&quot;substancia&quot;].map(grupo)
+log[&quot;nomes_de_substancia&quot;] = df[&quot;substancia&quot;].nunique()
+log[&quot;grupos_de_substancia&quot;] = df[&quot;grupo_substancia&quot;].nunique()
+log[&quot;linhas_reagrupadas&quot;] = int((df[&quot;substancia&quot;] != df[&quot;grupo_substancia&quot;]).sum())
 
-# 5. Coluna de data para séries mensais
-df[&quot;data&quot;] = pd.to_datetime(dict(year=df[&quot;ano&quot;], month=df[&quot;mes&quot;], day=1))
+# 6. Problemas que ficam marcados, sem apagar a linha (o valor recolhido existe)
+df[&quot;sem_local&quot;] = df[&quot;uf&quot;].isna()
+df[&quot;quantidade_valida&quot;] = df[&quot;quantidade&quot;].fillna(0) &gt; 0
+log[&quot;sem_uf_municipio&quot;] = int(df[&quot;sem_local&quot;].sum())
+log[&quot;quantidade_zero_ou_vazia&quot;] = int((~df[&quot;quantidade_valida&quot;]).sum())
 
-df.to_csv(&quot;cfem_limpo.csv&quot;, index=False, encoding=&quot;utf-8&quot;)
 with sqlite3.connect(&quot;cfem.db&quot;) as con:
-    df.assign(data=df[&quot;data&quot;].dt.strftime(&quot;%Y-%m-%d&quot;)).to_sql(&quot;cfem&quot;, con, if_exists=&quot;replace&quot;, index=False)
+    df.to_sql(&quot;cfem&quot;, con, if_exists=&quot;replace&quot;, index=False)
 
 log[&quot;linhas_finais&quot;] = len(df)
-log[&quot;substancias_distintas&quot;] = df[&quot;substancia&quot;].nunique()
 print(log)
 </code></pre>
     </div>
@@ -312,7 +355,7 @@ print(log)
 </div>
 
 <script>
-const D={"anual": [[2019, 4967.4], [2020, 5323.6], [2021, 7805.5], [2022, 6484.0], [2023, 5983.4], [2024, 5777.3], [2025, 4110.6]], "subst": [["MINÉRIO DE FERRO", 35566.9], ["COBRE", 2601.1], ["OURO", 786.9], ["BAUXITA", 720.5], ["NIÓBIO", 350.4], ["NÍQUEL", 133.8], ["FOSFATO", 108.8], ["ZINCO", 74.4], ["MAGNESITA", 69.2], ["GRANITO", 20.2], ["AREIA", 8.1], ["BRITA", 5.5], ["ROCHA ORNAMENTAL", 4.2], ["ÁGUA MINERAL", 1.7]], "uf": [["PA", 28995.9], ["MG", 10967.1], ["GO", 328.0], ["BA", 121.5], ["ES", 20.2], ["RJ", 19.2]], "mun": [["Parauapebas (PA)", 16634.2], ["Canaã dos Carajás (PA)", 10297.9], ["Mariana (MG)", 2639.6], ["Congonhas (MG)", 2338.0], ["Itabira (MG)", 1864.9], ["Nova Lima (MG)", 1542.6], ["Marabá (PA)", 1209.4], ["São Gonçalo do Rio Abaixo (MG)", 995.5]], "mensal": [["2019-01", 322.4], ["2019-02", 337.6], ["2019-03", 384.7], ["2019-04", 414.3], ["2019-05", 435.1], ["2019-06", 473.9], ["2019-07", 441.5], ["2019-08", 443.5], ["2019-09", 447.4], ["2019-10", 452.3], ["2019-11", 432.8], ["2019-12", 381.8], ["2020-01", 369.9], ["2020-02", 379.7], ["2020-03", 445.7], ["2020-04", 374.4], ["2020-05", 381.0], ["2020-06", 494.7], ["2020-07", 468.1], ["2020-08", 508.9], ["2020-09", 474.4], ["2020-10", 504.2], ["2020-11", 453.8], ["2020-12", 468.7], ["2021-01", 523.5], ["2021-02", 514.2], ["2021-03", 586.7], ["2021-04", 569.9], ["2021-05", 705.3], ["2021-06", 681.0], ["2021-07", 737.6], ["2021-08", 710.1], ["2021-09", 715.2], ["2021-10", 734.5], ["2021-11", 668.4], ["2021-12", 659.0], ["2022-01", 429.6], ["2022-02", 438.9], ["2022-03", 511.8], ["2022-04", 543.3], ["2022-05", 557.9], ["2022-06", 558.3], ["2022-07", 617.9], ["2022-08", 594.3], ["2022-09", 609.4], ["2022-10", 517.3], ["2022-11", 559.9], ["2022-12", 545.3], ["2023-01", 379.7], ["2023-02", 402.9], ["2023-03", 487.4], ["2023-04", 472.9], ["2023-05", 546.2], ["2023-06", 555.8], ["2023-07", 562.2], ["2023-08", 562.0], ["2023-09", 550.9], ["2023-10", 467.2], ["2023-11", 526.0], ["2023-12", 470.3], ["2024-01", 375.2], ["2024-02", 386.0], ["2024-03", 456.3], ["2024-04", 493.8], ["2024-05", 514.7], ["2024-06", 502.7], ["2024-07", 528.8], ["2024-08", 499.3], ["2024-09", 541.0], ["2024-10", 500.4], ["2024-11", 487.0], ["2024-12", 492.1], ["2025-01", 364.6], ["2025-02", 385.2], ["2025-03", 419.9], ["2025-04", 484.5], ["2025-05", 498.7], ["2025-06", 459.0], ["2025-07", 489.6], ["2025-08", 537.5], ["2025-09", 471.6]], "ferro_ufs": [["PA", 25540.4], ["MG", 10026.5]], "total": [[40.45, 26]], "mes": [[1, 400.1], [2, 409.9], [3, 478.8], [4, 478.1], [5, 523.4], [6, 544.4], [7, 559.4], [8, 553.0], [9, 556.4], [10, 529.3], [11, 521.3], [12, 502.9]]};
+const D={"anual": [[2022, 7017.0], [2023, 6858.0], [2024, 7437.0], [2025, 7910.0]], "sem": [[2022, 3351.0], [2023, 3297.0], [2024, 3608.0], [2025, 3670.0], [2026, 3809.0]], "subst": [["FERRO", 23998.0], ["COBRE", 2083.0], ["OURO", 2042.0], ["CALCÁRIO", 798.0], ["ALUMÍNIO", 765.0], ["ÁGUA MINERAL", 342.0], ["FOSFATO", 301.0], ["GRANITO", 293.0]], "mun": [["PARAUAPEBAS (PA)", 5361.0], ["CANAÃ DOS CARAJÁS (PA)", 5285.0], ["CONCEIÇÃO DO MATO DENTRO (MG)", 1786.0], ["CONGONHAS (MG)", 1447.0], ["ITABIRITO (MG)", 1340.0], ["ITABIRA (MG)", 1330.0], ["MARIANA (MG)", 1254.0], ["NOVA LIMA (MG)", 1198.0]], "mes": [[1, 627.0], [2, 552.0], [3, 521.0], [4, 575.0], [5, 582.0], [6, 625.0], [7, 631.0], [8, 660.0], [9, 635.0], [10, 653.0], [11, 642.0], [12, 602.0]], "ferro": [[2022, 3875.0, 1462.0, 5337.0], [2023, 3608.0, 1524.0, 5133.0], [2024, 3732.0, 1846.0, 5578.0], [2025, 3366.0, 2099.0, 5465.0]]};
 const NS="http://www.w3.org/2000/svg";
 const fmt=n=>n.toLocaleString("pt-BR",{maximumFractionDigits:0});
 function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
@@ -331,12 +374,12 @@ function vbars(id,rows,hl){
   el("line",{x1:m.l,x2:W-m.r,y1:H-m.b,y2:H-m.b,stroke:"var(--line)"},svg);
 }
 function hbars(id,rows,hl){
-  const svg=document.getElementById(id),W=420,rh=26,lw=178,m={t:4,r:58};
+  const svg=document.getElementById(id),W=420,rh=26,lw=222,m={t:4,r:58};
   const H=m.t+rows.length*rh;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
   const max=Math.max(...rows.map(r=>r[1]));
   rows.forEach((r,i)=>{
     const y=m.t+i*rh,w=Math.max(2,(W-lw-m.r)*r[1]/max);
-    const name=r[0].length>22?r[0].slice(0,21)+"…":r[0];
+    const name=r[0].length>31?r[0].slice(0,30)+"…":r[0];
     txt(svg,lw-8,y+rh/2+4,name,{"text-anchor":"end"});
     el("rect",{x:lw,y:y+5,width:w,height:rh-10,rx:2,fill:hl(r,i)?"var(--accent)":"var(--bar)"},svg);
     txt(svg,lw+w+6,y+rh/2+4,fmt(r[1]),{class:"v"});
@@ -356,10 +399,11 @@ function line(id,rows){
   [iMin,iMax].forEach(i=>{el("circle",{cx:pts[i][0],cy:pts[i][1],r:4,fill:"var(--ochre)"},svg);
     txt(svg,pts[i][0]+(i===iMin?6:0),pts[i][1]-9,fmt(rows[i][1]),{class:"v","text-anchor":i===iMin?"start":"middle"})});
 }
-vbars("c-ano",D.anual,r=>r[0]===2021);
-hbars("c-sub",D.subst.slice(0,8).map(r=>[r[0].charAt(0)+r[0].slice(1).toLowerCase(),r[1]]),(r,i)=>i===0);
-hbars("c-mun",D.mun,(r,i)=>i<2);
-line("c-mes",D.mes);
+const tc=s=>s.toLowerCase().replace(/(^|\s|\()(\S)/g,(m,a,b)=>a+b.toUpperCase()).replace(/ (De|Do|Dos|Da|Das) /g,m=>m.toLowerCase()).replace(/\((\w\w)\)/,(m,u)=>'('+u.toUpperCase()+')');
+vbars("c-ano",D.anual,r=>r[0]===2025);
+vbars("c-sem",D.sem,r=>r[0]===2026);
+hbars("c-sub",D.subst.map(r=>[tc(r[0]),r[1]]),(r,i)=>i===0);
+hbars("c-mun",D.mun.map(r=>[tc(r[0]),r[1]]),(r,i)=>i<2);
 
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(t=>{const on=t===b;t.setAttribute("aria-selected",on);document.getElementById(t.getAttribute("aria-controls")).hidden=!on});
