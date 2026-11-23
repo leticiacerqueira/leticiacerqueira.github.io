@@ -98,6 +98,21 @@ pre{margin:0;max-height:420px;overflow:auto;background:var(--bg);border-radius:6
 @media (max-width:560px){.timeline div{grid-template-columns:1fr;gap:.1rem}}
 footer{padding-block:2rem 3rem;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
 @media (prefers-reduced-motion:no-preference){.btn{transition:border-color .15s}}
+.dash-open{all:unset;cursor:pointer;display:grid;place-items:center;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.dash-open img{width:100%;height:auto;display:block;transition:opacity .2s}
+.dash-open .btn{position:absolute;box-shadow:0 6px 24px rgb(0 0 0/.25)}
+.dash-open:hover img{opacity:.75}.dash-open:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+dialog.dash{width:min(1280px,calc(100vw - 24px));height:calc(100dvh - 24px);max-width:none;max-height:none;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg)}
+dialog.dash::backdrop{background:rgb(10 14 16/.6)}
+dialog.dash[open]{display:grid;grid-template-rows:auto 1fr auto}
+.dash-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 1rem;border-bottom:1px solid var(--line)}
+.dash-head h4{margin:0;font:700 1.05rem/1.2 var(--f-display)}
+.dash-x{all:unset;cursor:pointer;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:1.1rem}
+.dash-x:hover{border-color:var(--accent)}.dash-x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+dialog.dash iframe{width:100%;height:100%;border:0;background:var(--bg)}
+.dash-foot{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;padding:.7rem 1rem;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+.dash-foot b{color:var(--fg)}
+@media (max-width:640px){dialog.dash{width:100vw;height:100dvh;border-radius:0;border:0}}
 </style>
 
 <div class="strata" aria-hidden="true">
@@ -395,7 +410,9 @@ print(log)
       </ul>
     </div>
     <figure><figcaption><b>Precisão das duplicatas de campo</b><span>original x duplicata e curva HARD</span></figcaption><img src="img/qaqc-duplicatas.png" alt="Dispersão original x duplicata e curva HARD das duplicatas de campo" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
-    <figure><figcaption><b>Painel da campanha de sondagem</b><span>avanço, produtividade, recuperação e paradas</span></figcaption><img src="img/qaqc-painel-sondagem.png" alt="Painel com avanço acumulado x meta, produtividade por sonda, recuperação na zona mineralizada por sonda e horas paradas por motivo" loading="lazy" style="width:100%;height:auto;border-radius:6px;background:#fff"></figure>
+    <figure class="dash-prev"><figcaption><b>Painel interativo da campanha</b><span>filtros por sonda e período · caixa de testemunho por furo</span></figcaption>
+      <button type="button" class="dash-open" data-dash aria-label="Abrir o painel interativo da sondagem"><img src="img/qaqc-painel-sondagem.png" alt="Prévia do painel: avanço acumulado x meta, produtividade por sonda, recuperação na zona mineralizada e horas paradas" loading="lazy"><span class="btn primary">▶ Abrir painel interativo</span></button>
+    </figure>
     <div class="read" style="display:grid;gap:.75rem">
       <span class="label">O que os boletins mostram</span>
       <ul class="insights">
@@ -403,7 +420,7 @@ print(log)
         <li>A SD-01, a mais rápida, recuperou só <b>86,5% do testemunho na zona mineralizada</b> (meta de 90%). Os 20 furos abaixo da meta são todos dela: no minério friável, velocidade custa recuperação e pode enviesar o teor.</li>
       </ul>
     </div>
-    <span class="label"><a href="https://leticiacerqueira.github.io/painel-sondagem/" target="_blank" rel="noopener">Abrir o painel interativo</a> · Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
+    <span class="label"><a href="painel-sondagem/index.html" data-dash>Abrir o painel interativo</a> · Código · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
   </article>
 
   <div class="soon">
@@ -490,6 +507,17 @@ document.getElementById("copy-email").addEventListener("click",e=>{
   const sel=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("email"));const w=getSelection();w.removeAllRanges();w.addRange(r);b.textContent="Selecionado, use Ctrl+C"};
   try{navigator.clipboard.writeText(s).then(done,sel)}catch(_){sel()}
 });
+</script>
+<dialog class="dash" id="dash" aria-labelledby="dash-t">
+  <div class="dash-head"><h4 id="dash-t">Painel da Sondagem · exploração de grafita</h4><button type="button" class="dash-x" id="dash-x" aria-label="Fechar">✕</button></div>
+  <iframe title="Painel interativo da campanha de sondagem" loading="lazy"></iframe>
+  <div class="dash-foot"><span><b>Conteúdo:</b> avanço x meta, produtividade das sondas, recuperação de testemunho, paradas e caixa de testemunho por furo</span><span><b>Ferramentas:</b> Python, SQL, HTML/SVG e JavaScript</span><span><a href="painel-sondagem/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a> · <a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">código</a></span></div>
+</dialog>
+<script>
+(()=>{const d=document.getElementById("dash"),f=d.querySelector("iframe");
+document.querySelectorAll("[data-dash]").forEach(b=>b.addEventListener("click",e=>{if(!d.showModal)return;e.preventDefault();if(!f.src)f.src="painel-sondagem/index.html";d.showModal();}));
+document.getElementById("dash-x").onclick=()=>d.close();
+d.addEventListener("click",e=>{if(e.target===d)d.close();});})();
 </script>
 
 </body>
