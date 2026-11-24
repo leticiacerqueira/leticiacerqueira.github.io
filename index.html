@@ -63,6 +63,11 @@ section{padding-block:2.75rem;border-top:1px solid var(--line);display:grid;gap:
 .skills>div{display:grid;gap:.4rem;min-width:0;align-content:start}
 .chips{display:flex;flex-wrap:wrap;gap:.35rem}
 .chip{font:500 .8rem/1 var(--f-mono);padding:.4rem .55rem;border-radius:4px;background:var(--accent-soft);color:var(--fg)}
+.chip i{font-style:normal;color:var(--muted);margin-left:.4rem;font-size:.72rem}
+.chip i::before{content:"· "}
+.group-h{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
+.group-h h3{font-size:1.15rem}
+.group-h span{color:var(--muted);font-size:.92rem}
 .case{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:clamp(1.1rem,3vw,2rem);display:grid;gap:1.5rem}
 .case-head{display:grid;gap:.6rem}
 .case-head h3{font-size:1.5rem}
@@ -168,19 +173,97 @@ dialog.dash[data-modo="pbi"] iframe{height:auto;aspect-ratio:1280/770;max-height
 <section aria-labelledby="comp">
   <h2 id="comp">Competências</h2>
   <div class="skills">
-    <div><span class="label">Dados e BI</span><div class="chips"><span class="chip">SQL</span><span class="chip">Power BI</span><span class="chip">DAX</span><span class="chip">Power Query</span><span class="chip">Excel avançado</span></div></div>
-    <div><span class="label">Programação</span><div class="chips"><span class="chip">Python</span><span class="chip">pandas</span><span class="chip">SQLite</span><span class="chip">IA generativa</span></div></div>
-    <div><span class="label">Qualidade e estatística</span><div class="chips"><span class="chip">QA/QC</span><span class="chip">gráficos de controle</span><span class="chip">estatística descritiva</span></div></div>
-    <div><span class="label">Geociências e GIS</span><div class="chips"><span class="chip">QGIS</span><span class="chip">ArcGIS</span><span class="chip">Leapfrog Geo</span><span class="chip">Petrel</span><span class="chip">NI 43-101</span></div></div>
+    <div><span class="label">Dados e BI</span><div class="chips"><span class="chip">Power BI<i>avançado</i></span><span class="chip">Power Query<i>avançado</i></span><span class="chip">Excel<i>avançado</i></span><span class="chip">DAX<i>intermediário</i></span><span class="chip">SQL<i>intermediário</i></span></div></div>
+    <div><span class="label">Programação</span><div class="chips"><span class="chip">Python<i>intermediário</i></span><span class="chip">pandas<i>intermediário</i></span><span class="chip">SQLite</span><span class="chip">IA generativa</span></div></div>
+    <div><span class="label">Qualidade e estatística</span><div class="chips"><span class="chip">QA/QC<i>avançado</i></span><span class="chip">validação de dados<i>avançado</i></span><span class="chip">estatística descritiva<i>intermediário</i></span></div></div>
+    <div><span class="label">Geociências e GIS</span><div class="chips"><span class="chip">QGIS<i>avançado</i></span><span class="chip">ArcGIS<i>avançado</i></span><span class="chip">Leapfrog Geo<i>intermediário</i></span><span class="chip">Petrel<i>básico</i></span><span class="chip">NI 43-101</span></div></div>
   </div>
 </section>
 
 <section aria-labelledby="proj">
   <h2 id="proj">Projetos</h2>
 
+  <div class="group-h"><h3>Negócios e qualidade de dados</h3><span>projetos que servem a qualquer setor</span></div>
+
   <article class="case">
     <div class="case-head">
-      <span class="label">Projeto 1 · Python + SQL · mineração · dados reais da ANM</span>
+      <span class="label">Projeto 1 · Python + SQL + Power BI · varejo</span>
+      <h3>Receita sobe, margem cai: onde está o vazamento? Vendas de uma rede de lojas</h3>
+      <p class="question">De janeiro a outubro de 2026, a receita cresceu 14,7%, mas a margem bruta caiu de 40,1% para 37,3%. O que explica a queda, e o que a gestão deve fazer?</p>
+      <p class="note">Rede fictícia de lojas de artigos para casa no Grande Rio: 7 lojas físicas e e-commerce, de janeiro de 2024 a outubro de 2026, com 158 mil itens vendidos, 240 produtos, metas, campanhas e devoluções. Os dados são simulados, no formato de um ERP e com os problemas que aparecem na prática.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="label">1 · Limpeza em Python</span><p>601 itens duplicados pela integração do e-commerce, código de loja fora do padrão, estornos lançados como venda, preço zero, ano digitado errado e 11 grafias para 6 categorias. Tudo registrado num log.</p></div>
+      <div class="step"><span class="label">2 · Perguntas em SQL</span><p>8 consultas com CTEs, LAG para comparar com o mesmo mês do ano anterior, junção da venda com a campanha válida na data, curva ABC com soma acumulada e RANK de metas.</p></div>
+      <div class="step"><span class="label">3 · Painel</span><p>Painel interativo com filtro de loja e período e projeto em Power BI com medidas DAX de margem, ticket médio, desconto acima da política e devolução.</p></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="clean">
+      <thead><tr><th>Causa da queda de margem (jan–out 2026 x 2025)</th><th>Impacto</th></tr></thead>
+      <tbody>
+        <tr><td>Desconto de campanha que continuou ativo em 2 lojas</td><td>−1,8 p.p. · R$ 168 mil</td></tr>
+        <tr><td>Mix: eletroportáteis (menor margem) de 44% para 49% da receita</td><td>−1,0 p.p.</td></tr>
+        <tr><td>Margem bruta total</td><td>40,1% → 37,3%</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="dash-grid">
+      <figure class="dash-prev"><figcaption><b>Painel interativo</b><span>filtros por loja e período</span></figcaption>
+        <button type="button" class="dash-open" data-dash="vendas" aria-label="Abrir o painel de vendas e margem"><img src="img/vendas-painel.png" alt="Painel de vendas: receita, margem bruta, ticket médio, desconto acima da política, devolução, margem por loja e por categoria" loading="lazy"><span class="btn primary">▶ Abrir o painel</span></button>
+      </figure>
+    </div>
+    <div class="read" style="display:grid;gap:.75rem">
+      <span class="label">O que os dados mostram</span>
+      <ul class="insights">
+        <li>A campanha “Semana do Eletro” (20% de desconto) acabou em novembro de 2025, mas <b>a regra continuou ativa nos caixas da Barra e de Niterói</b>. Em 2026, a margem de eletroportáteis nessas lojas foi de 15,5%, contra 28,5% nas outras.</li>
+        <li>O mix também pesa: a categoria que mais cresce é a de menor margem. A meta de margem precisa considerar isso, e o acompanhamento deve ser por categoria.</li>
+        <li>As fritadeiras de um fornecedor passaram de 2% para <b>8% a 9% de devolução</b> a partir de março de 2026, 85% por defeito: R$ 132 mil estornados e R$ 96 mil de produto para negociar com o fornecedor.</li>
+        <li>Recomendação: desligar a regra, criar um alerta diário de desconto acima do teto e acionar o fornecedor.</li>
+      </ul>
+    </div>
+    <span class="label"><a href="painel-vendas/index.html" data-dash="vendas">Abrir o painel</a> · Código e Power BI · <a href="https://github.com/leticiacerqueira/analise-vendas-varejo" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
+  </article>
+
+  <article class="case">
+    <div class="case-head">
+      <span class="label">Projeto 2 · Python · OCR e qualidade de dados</span>
+      <h3>Quanto do texto escaneado chega errado? Validação de OCR em patentes</h3>
+      <p class="question">Quando um PDF escaneado passa por OCR, que tipos de erro aparecem, quais dá para corrigir automaticamente e quais precisam de revisão humana?</p>
+      <p class="note">Quatro patentes fictícias, escritas para o projeto com temas de mineração e óleo e gás, foram “escaneadas” com quatro níveis de ruído e lidas com OCR real (Tesseract, português). O texto extraído foi comparado palavra a palavra com o original.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="label">1 · Simular o scan</span><p>PDFs com título, resumo, reivindicações e figuras, degradados com rotação, desfoque, ruído e perda de resolução.</p></div>
+      <div class="step"><span class="label">2 · OCR e limpeza</span><p>Tesseract a 300 dpi com confiança por palavra, descarte de páginas só com ruído e regras seguras para unidades e números.</p></div>
+      <div class="step"><span class="label">3 · Validar</span><p>Alinhamento com o original, CER e WER, classificação de cada erro, decisão entre corrigir e revisar e checagem das legendas de figura.</p></div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="clean">
+      <thead><tr><th>Documento (ruído do scan)</th><th>Erro por palavra: bruto → após regras</th></tr></thead>
+      <tbody>
+        <tr><td>BR001 (leve)</td><td>8,7% → 5,2%</td></tr>
+        <tr><td>BR002 (moderado)</td><td>12,2% → 9,3%</td></tr>
+        <tr><td>BR003 (forte)</td><td>23,8% → 22,5%</td></tr>
+        <tr><td>BR004 (muito forte · legenda da figura não lida)</td><td>51,2% → 50,6%</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="read" style="display:grid;gap:.75rem">
+      <span class="label">O que os dados mostram</span>
+      <ul class="insights">
+        <li>Foram <b>67 divergências</b>: 16 corrigidas direto e <b>51 sinalizadas para revisão</b>. A regra é nunca inventar correção.</li>
+        <li>Os erros mais perigosos estão em números e unidades: <b>P80</b> lido como “PBO”, <b>g/t</b> como “gh” e <b>m³</b> como “m?”. Em documento técnico, eles mudam o sentido.</li>
+        <li>Uma regra automática transformou “SiO2” em “Si02”. Restringi a regra e passei a testar cada uma contra o original.</li>
+        <li>Acima de certo nível de ruído, corrigir palavra por palavra não compensa, e o documento deve ir inteiro para revisão manual.</li>
+      </ul>
+    </div>
+    <span class="label">Código · <a href="https://github.com/leticiacerqueira/validacao-ocr-patentes" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
+  </article>
+
+  <div class="group-h"><h3>Mineração e geociências</h3><span>a área onde trabalhei</span></div>
+
+  <article class="case">
+    <div class="case-head">
+      <span class="label">Projeto 3 · Python + SQL · mineração · dados reais da ANM</span>
       <h3>Para onde vão os royalties da mineração? Análise da CFEM 2022–2026</h3>
       <p class="question">Quais substâncias, estados e municípios concentram a arrecadação da CFEM, o que mais cresceu nos últimos anos e como 2026 se compara a 2025?</p>
       <p class="note">A CFEM é a compensação financeira que as mineradoras pagam sobre o faturamento. Fonte: Agência Nacional de Mineração, arquivo “Arrecadação pela CFEM 2022 a 2026” do Portal de Dados Abertos, atualizado em 19/11/2026. São 633 mil registros. Como os lançamentos de 2026 só estão completos até junho, as comparações de 2026 usam o 1º semestre.</p>
@@ -362,42 +445,7 @@ print(log)
 
   <article class="case">
     <div class="case-head">
-      <span class="label">Projeto 2 · Python · OCR e qualidade de dados</span>
-      <h3>Quanto do texto escaneado chega errado? Validação de OCR em patentes</h3>
-      <p class="question">Quando um PDF escaneado passa por OCR, que tipos de erro aparecem, quais dá para corrigir automaticamente e quais precisam de revisão humana?</p>
-      <p class="note">Quatro patentes fictícias, escritas para o projeto com temas de mineração e óleo e gás, foram “escaneadas” com quatro níveis de ruído e lidas com OCR real (Tesseract, português). O texto extraído foi comparado palavra a palavra com o original.</p>
-    </div>
-    <div class="steps">
-      <div class="step"><span class="label">1 · Simular o scan</span><p>PDFs com título, resumo, reivindicações e figuras, degradados com rotação, desfoque, ruído e perda de resolução.</p></div>
-      <div class="step"><span class="label">2 · OCR e limpeza</span><p>Tesseract a 300 dpi com confiança por palavra, descarte de páginas só com ruído e regras seguras para unidades e números.</p></div>
-      <div class="step"><span class="label">3 · Validar</span><p>Alinhamento com o original, CER e WER, classificação de cada erro, decisão entre corrigir e revisar e checagem das legendas de figura.</p></div>
-    </div>
-    <div style="overflow-x:auto">
-    <table class="clean">
-      <thead><tr><th>Documento (ruído do scan)</th><th>Erro por palavra: bruto → após regras</th></tr></thead>
-      <tbody>
-        <tr><td>BR001 (leve)</td><td>8,7% → 5,2%</td></tr>
-        <tr><td>BR002 (moderado)</td><td>12,2% → 9,3%</td></tr>
-        <tr><td>BR003 (forte)</td><td>23,8% → 22,5%</td></tr>
-        <tr><td>BR004 (muito forte · legenda da figura não lida)</td><td>51,2% → 50,6%</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <div class="read" style="display:grid;gap:.75rem">
-      <span class="label">O que os dados mostram</span>
-      <ul class="insights">
-        <li>Foram <b>67 divergências</b>: 16 corrigidas direto e <b>51 sinalizadas para revisão</b>. A regra é nunca inventar correção.</li>
-        <li>Os erros mais perigosos estão em números e unidades: <b>P80</b> lido como “PBO”, <b>g/t</b> como “gh” e <b>m³</b> como “m?”. Em documento técnico, eles mudam o sentido.</li>
-        <li>Uma regra automática transformou “SiO2” em “Si02”. Restringi a regra e passei a testar cada uma contra o original.</li>
-        <li>Acima de certo nível de ruído, corrigir palavra por palavra não compensa, e o documento deve ir inteiro para revisão manual.</li>
-      </ul>
-    </div>
-    <span class="label">Código · <a href="https://github.com/leticiacerqueira/validacao-ocr-patentes" target="_blank" rel="noopener">ver o repositório no GitHub</a></span>
-  </article>
-
-  <article class="case">
-    <div class="case-head">
-      <span class="label">Projeto 3 · Python + SQL · geologia · QA/QC de sondagem</span>
+      <span class="label">Projeto 4 · Python + SQL + Power BI · geologia · QA/QC de sondagem</span>
       <h3>Esses teores são confiáveis? QA/QC, validação e KPIs de uma campanha de sondagem</h3>
       <p class="question">Os teores de grafita de um banco de sondagem estão prontos para uma estimativa de recurso? Se não estiverem, quais lotes voltam ao laboratório e quais resultados ficam em espera?</p>
       <p class="note">A rotina que eu fazia como analista de dados geológicos na exploração de grafita, aqui num projeto simulado (bancos reais de empresas são confidenciais): campanha de 2024 a 2026 com 64 furos e 12.920 m em solo residual, saprolito, gnaisse kinzigítico grafitoso e veios pegmatóides, 12.920 amostras de rotina e 1.740 amostras de controle em 72 lotes, no formato usual de collar, survey, litologia, amostragem e laudo com carbono grafítico (Cg) e carbono total (CT), com os problemas que aparecem na prática.</p>
@@ -452,7 +500,7 @@ print(log)
   <div class="soon">
     <article>
       <span class="pill">Em construção</span>
-      <span class="label">Projeto 4 · SQL + Power BI · óleo e gás</span>
+      <span class="label">Projeto 5 · SQL + Power BI · óleo e gás</span>
       <h3>Produção de petróleo por poço</h3>
       <p>Consultas em SQL sobre produção mensal de poços (padrão ANP): declínio, ranking por campo e participação de cada operadora, com dashboard em Power BI.</p>
     </article>
@@ -544,6 +592,8 @@ document.getElementById("copy-email").addEventListener("click",e=>{
 const GH='<a href="https://github.com/leticiacerqueira/qaqc-sondagem" target="_blank" rel="noopener">GitHub</a>';
 const M={pbi:{src:"https://app.powerbi.com/view?r=eyJrIjoiZWRjYmVmNDgtMzcxNy00MzM0LWIwN2QtYTJjNmUyZDhhMWY3IiwidCI6ImI4YWYwYWFjLTcwMjEtNDcwOS1hYjFmLWU2MzQ1ZTczNTI3OCJ9",t:"Painel de Sondagem · Power BI",
   f:'<span><b>Páginas:</b> Resumo da Campanha, Sondas e Recuperação e QA/QC</span><span><b>Ferramentas:</b> Python, SQL, Power Query, Power BI e DAX</span><span><b>Código:</b> '+GH+'</span>'},
+ vendas:{src:"painel-vendas/index.html",t:"Painel de Vendas e Margem",
+  f:'<span><b>Conteúdo:</b> receita, margem por loja e categoria, desconto acima da política e devoluções</span><span><b>Ferramentas:</b> Python, SQL, HTML/SVG e JavaScript (versão Power BI no repositório)</span><span><b>Código:</b> <a href="https://github.com/leticiacerqueira/analise-vendas-varejo" target="_blank" rel="noopener">GitHub</a> · <a href="painel-vendas/index.html" target="_blank" rel="noopener">tela cheia</a></span>'},
  html:{src:"painel-sondagem/index.html",t:"Painel de Sondagem · HTML",
   f:'<span><b>Conteúdo:</b> avanço x meta, sondas, recuperação, paradas e caixa de testemunho por furo</span><span><b>Ferramentas:</b> Python, SQL, HTML/SVG e JavaScript</span><span><b>Código:</b> '+GH+' · <a href="painel-sondagem/index.html" target="_blank" rel="noopener">tela cheia</a></span>'}};
 document.querySelectorAll("[data-dash]").forEach(b=>b.addEventListener("click",e=>{if(!d.showModal)return;e.preventDefault();
